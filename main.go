@@ -43,6 +43,11 @@ func main() {
 		fmt.Printf("tempt %s\n", version)
 		os.Exit(0)
 	}
+	
+	if len(args) < 1 {
+		log.Print("must supply at least one argument")
+		usage()
+	}
 
 	exit := 0
 	err, exit := inner(args[0], args[1:]...)
