@@ -1,10 +1,14 @@
 #!/bin/sh
 
+set -eux
+
 name="$1"
-base="${2##*/${name}-}"
+version="$2"
+target="$3"
+base="${target##*${name}-}"
 
 export CGO_ENABLED=0
 export GOARCH="${base#*-}"
 export GOOS="${base%-*}"
 
-exec go build -v -a -tags netgo -o "$2" -ldflags "-X main.version=${version}" ./
+exec go build -v -a -tags netgo -o "$target" -ldflags "-X main.version=${version}" ./

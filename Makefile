@@ -1,16 +1,18 @@
 NAME := tempt
-VERSION := $(git describe --long --tags)
-BINARIES := $(patsubst %,release/$(NAME)-%,\
+VERSION := $(shell git describe --long --tags)
+BINARIES := $(patsubst %,$(NAME)-%,\
 	linux-amd64 \
 	darwin-amd64)
 SHAS := $(BINARIES:%=%.sha256)
 RELEASE := $(BINARIES) $(SHAS)
 
-export CGO_ENABLED ?= 0
-
 .PHONY: release
 
-release: release.sh $(RELEASE)
+release: $(RELEASE)
+	hub release create $(RELEASE:%=-a %) -c master -m "$(VERSION)" "$(VERSION)"
+
+clean:
+	rm -f $(RELEASE)
 
 %.sha256: %
 	sha256sum $< > $@
@@ -18,4 +20,4 @@ release: release.sh $(RELEASE)
 $(SHAS): $(BINARIES)
 
 $(BINARIES):
-	./release.sh $(NAME) $@
+	./release.sh $(NAME) $(VERSION) $@
